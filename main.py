@@ -189,6 +189,40 @@ def structural_analogy(source_image_path: str,
         downscale_ratio=downsacle_ratio)
     utils.imwrite(output_path, output_image)
 
+def animation(input_path: str,
+               output_path: str,
+               noise_std: float = 0.75,
+               alpha: float = _INF,
+               patch_size: int = 7,
+               downsacle_ratio: float = 0.75,
+               num_levels: int = 9,
+               num_frames: int = 24,
+               device: Optional[str] = None) -> None:
+    """Generates animated images based on a single image.
+
+    Args:
+        input_path: Path to the input image.
+        output_path: Path to the output image.
+        noise_std: The standard deviation of the noise to the corasest level.
+            Increasing it will diversify the outputs at the cost of fidelity.
+        alpha: The alpha parameter, used to set the compeletness level.
+            There is a tradeoff between completeness and coherence.
+            Decreasing alpha would encourage completeness.
+        patch_size: The size of the patch to use.
+        downscale_ratio: Downsampling scale between consecuitive pyramid levels.
+            Should be less than 1.
+        num_levels: Number of pyramid levels to use.
+        device: The device to use.
+    """
+    device = _get_device(device)
+    input_image = utils.imread(input_path).to(device=device)
+    output_image = applications.animation(input_image,
+                                           noise_std=noise_std,
+                                           alpha=alpha,
+                                           patch_size=patch_size,
+                                           num_levels=num_levels,
+                                           downscale_ratio=downsacle_ratio)
+    utils.imwrite(output_path, output_image)
 
 if __name__ == '__main__':
     fire.Fire()
